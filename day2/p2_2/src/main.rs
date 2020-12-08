@@ -7,9 +7,8 @@ fn check_pw(pattern : Vec<usize>, letter : char, password : &str) -> bool {
     let appearances : Vec<char> = slice.chars().collect();
     if appearances.len() >= beg && appearances.len() >= end {
         let possible_letters = vec![appearances[beg - 1], appearances[end - 1]];
-        let n_letters : Vec<&char> = possible_letters.iter().filter(|l| !(**l == letter))
-                               .collect();
-        return n_letters.len() == 1;
+        let n_letters : usize = possible_letters.iter().filter(|l| !(**l == letter)).count();
+        return n_letters == 1;
     }
     return false;
 }
@@ -26,9 +25,9 @@ fn main() {
         // we split the numbers from the letter
         let pattern : Vec<&str> = poss_split[0].split(" ").collect();
         let numbers_in_pattern : Vec<usize> = pattern[0].split("-")
-                                                      .map(|w| w.parse::<usize>()
-                                                                .unwrap())
-                                                      .collect();
+                                                        .map(|w| w.parse::<usize>()
+                                                        .unwrap())
+                                                        .collect();
         let pw : &str = poss_split[1];
         if check_pw(numbers_in_pattern, pattern[1].parse::<char>().unwrap(), pw) {
             wrong_pws = wrong_pws + 1;
