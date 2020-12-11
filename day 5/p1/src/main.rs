@@ -1,4 +1,5 @@
 use std::fs;
+use std::env;
 
 #[cfg(test)]
 mod tests {
@@ -57,17 +58,41 @@ fn partition_space(bs : &str, upper_comparator : char,
     return upper;
 }
 
-fn map_data_to_ids(data : &str) -> u32 {
+fn str_to_ids(data : &str) -> u32 {
     let row = partition_space(&data[0..7], 'B', 'F', 127);
     let column = partition_space(&data[7..data.len()], 'R', 'L', 7);
     find_id(row, column)
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
     let txt = fs::read_to_string("../input.txt").expect("Error opening file");
+    if args.len() != 2 {
+        panic!("Wrong number of inputs, must provide which part is being solved
+                'p1' or 'p2'");
+    }
 
-    let max_id : u32 = txt.split_terminator("\n")
-                          .map(map_data_to_ids).max().unwrap();
+   if args[1] == "p1" {
+        let max_id : u32 = txt.split_terminator("\n")
+                              .map(str_to_ids).max().unwrap();
+        println!("The highest id is {}", max_id);
+    } else if args[1] == "p2" {
+        let ids = txt.split_terminator("\n").map(str_to_ids).collect::<Vec<u32>>();
+        let max_id = ids.iter().max().unwrap();
+        let mut unavail_ids : Vec<bool> = vec![false; *max_id as usize + 1];
 
-    println!("The highest id is {}", max_id);
+        for i in ids {
+            unavail_ids[i as usize] = true;
+        }
+
+        for b in 1..(unavail_ids.len() - 1) {
+            if !unavail_ids[b] && unavail_ids[b - 1] && unavail_ids[b + 1] {
+                println!("my id is {}", b);
+                return;
+            }
+        }
+
+    } else {
+        println!("Choose the correct part 'p1/p2'");
+    }
 }
