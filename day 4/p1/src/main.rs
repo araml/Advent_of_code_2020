@@ -34,7 +34,7 @@ fn check_valid_passport(passport : &Vec<&str>) -> bool {
 
 fn compact(input : &str) -> Vec<&str> {
     let mut result : Vec<&str> = Vec::new();
-    let input = input.split("\n").collect::<Vec<&str>>();
+    let input = input.split_terminator("\n").collect::<Vec<&str>>();
     for i in input {
         let mut c = i.split(" ").collect::<Vec<&str>>();
         result.append(&mut c);
@@ -44,11 +44,10 @@ fn compact(input : &str) -> Vec<&str> {
 }
 
 fn main() {
-    let txt = fs::read_to_string("../input.txt").expect("Error opening file");
+    let mut txt = fs::read_to_string("../input.txt").expect("Error opening file");
 
     let mut passports : Vec<&str> = txt.split("\n\n").collect::<Vec<&str>>();
     println!("Total passports {}", passports.len());
-    passports.pop();
 
     let passports : Vec<Vec<&str>> = passports.iter().map(|w| compact(w)).collect::<Vec<Vec<&str>>>();
 
